@@ -1,0 +1,17 @@
+@import '../index/index.wxss';
+.card { background: #fff; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+.row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin: 4px 0; }
+.price { color: #f60; font-weight: bold; }
+.tag { font-size: 12px; padding: 2px 6px; border-radius: 4px; }
+.tag-1 { background: #f0f0f0; color: #666; }
+.tag-2 { background: #fff3e0; color: #f60; }
+.tag-3 { background: #e8f5e9; color: #07c160; }
+.tag-4 { background: #fce4ec; color: #e74c3c; }
+.tag-5 { background: #f0f0f0; color: #999; }
+.audit-danger { color: #e74c3c; font-size: 13px; }
+.audit-success { color: #07c160; font-size: 13px; }
+.actions { margin-top: 8px; }
+.btn { background: #f60; color: #fff; font-size: 13px; border-radius: 20px; }
+.status { font-size: 13px; }
+.status.warn { color: #f60; }
+.status.success { color: #07c160; }

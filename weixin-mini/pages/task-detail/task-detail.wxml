@@ -1,0 +1,39 @@
+<view class="container" wx:if="{{task}}">
+  <image wx:if="{{task.taskCover}}" src="{{task.taskCover}}" class="cover" mode="aspectFill" />
+  <view class="section">
+    <view class="title">{{task.taskTitle}}</view>
+    <view class="price-row"><text class="price">¥{{task.rewardAmount}}</text><text class="gift" wx:if="{{task.gift}}">{{task.gift}}</text></view>
+    <view class="intro">{{task.taskIntro}}</view>
+    <view class="content" wx:if="{{task.taskContent}}"><rich-text nodes="{{task.taskContent}}" /></view>
+    <view class="expire">有效时长：{{task.expireMinute}} 分钟</view>
+  </view>
+
+  <!-- 未领取 -->
+  <view wx:if="{{!order}}" class="btn-area">
+    <button class="btn btn-primary" bindtap="doClaim" loading="{{claiming}}">立即领取</button>
+  </view>
+
+  <!-- 待提交 -->
+  <view wx:if="{{order&&order.auditStatus===1}}" class="section">
+    <view class="label">订单号</view>
+    <input value="{{submitNote}}" placeholder="请输入订单号" bindinput="onNoteInput" />
+    <view class="label">上传截图</view>
+    <view class="img-row">
+      <block wx:for="{{uploadList}}" wx:key="*this"><image src="{{item}}" class="upload-img" /></block>
+      <view wx:if="{{uploadList.length<3}}" class="upload-btn" bindtap="uploadImg">+</view>
+    </view>
+    <button class="btn btn-primary" bindtap="doSubmit" loading="{{submitting}}">提交审核</button>
+  </view>
+
+  <!-- 已提交 -->
+  <view wx:if="{{order&&order.auditStatus===2}}" class="section"><view class="status warn">审核中</view></view>
+  <view wx:if="{{order&&order.auditStatus===3}}" class="section">
+    <view class="status success">审核通过</view>
+    <button wx:if="{{order.grantPay===1&&order.withdrawStatus===0}}" class="btn btn-warn" bindtap="doWithdraw" loading="{{withdrawing}}">领取奖励 ¥{{order.rewardAmount}}</button>
+    <view wx:elif="{{order.withdrawStatus===1}}" class="status warn">提现处理中</view>
+    <view wx:elif="{{order.withdrawStatus===2}}" class="status success">已到账</view>
+    <view wx:elif="{{order.grantPay===0}}" class="status">等待授权打款</view>
+  </view>
+  <view wx:if="{{order&&order.auditStatus===4}}" class="section"><view class="status danger">已驳回：{{order.auditNote}}</view></view>
+  <view wx:if="{{order&&order.auditStatus===5}}" class="section"><view class="status">任务已过期</view></view>
+</view>

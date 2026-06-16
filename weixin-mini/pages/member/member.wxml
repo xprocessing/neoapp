@@ -1,0 +1,14 @@
+<view class="container">
+  <view class="header">会员中心</view>
+  <view class="info-box">
+    <text class="status-text">{{member.isMember ? '会员' : '非会员'}}</text>
+    <text wx:if="{{member.expireTime}}" class="expire">到期：{{member.expireTime}}</text>
+  </view>
+  <view wx:if="{{packages.length===0}}" class="empty">暂无套餐</view>
+  <view wx:for="{{packages}}" wx:key="id" class="pkg-card">
+    <view class="pkg-name">{{item.packageName}}</view>
+    <view class="pkg-price">¥{{item.price}}</view>
+    <view class="pkg-info">会员{{item.dayNum}}天<text wx:if="{{item.givePoint>0}}"> · 赠{{item.givePoint}}积分</text></view>
+    <button class="buy-btn" bindtap="buy" data-id="{{item.id}}" loading="{{buying}}">立即购买</button>
+  </view>
+</view>

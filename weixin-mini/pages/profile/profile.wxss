@@ -1,0 +1,17 @@
+.container { padding: 16px; }
+.header { font-size: 20px; font-weight: bold; margin-bottom: 16px; }
+.login-box { display: flex; justify-content: center; padding: 80px 0; }
+.login-btn { background: #07c160; color: #fff; border-radius: 8px; width: 60%; }
+.user-box { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.avatar { width: 56px; height: 56px; border-radius: 50%; background: #f0f0f0; }
+.nickname { font-size: 17px; font-weight: 600; }
+.phone { font-size: 13px; color: #999; }
+.card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.card-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+.points { display: flex; align-items: baseline; gap: 6px; }
+.num { font-size: 32px; font-weight: bold; color: #0052D9; }
+.label { font-size: 14px; color: #666; }
+.points-total { font-size: 13px; color: #999; margin-top: 4px; }
+.row { display: flex; justify-content: space-between; font-size: 14px; margin: 6px 0; }
+.highlight { color: #0052D9; font-weight: 600; }
+.logout-btn { background: #f0f0f0; color: #e74c3c; border-radius: 8px; margin-top: 24px; }

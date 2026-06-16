@@ -1,0 +1,34 @@
+<view class="container">
+  <view class="header">个人中心</view>
+
+  <!-- 未登录 -->
+  <view wx:if="{{!user}}" class="login-box">
+    <button class="login-btn" bindtap="doLogin" loading="{{logining}}">微信登录</button>
+  </view>
+
+  <!-- 已登录 -->
+  <view wx:else>
+    <view class="user-box">
+      <image wx:if="{{user.avatar}}" src="{{user.avatar}}" class="avatar" />
+      <image wx:else class="avatar" src="/images/avatar.png" />
+      <view class="user-info">
+        <view class="nickname">{{user.nickname || '-'}}</view>
+        <view class="phone">{{user.phone || '-'}}</view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">我的积分</view>
+      <view class="points"><text class="num">{{points.usablePoint||0}}</text><text class="label">可用积分</text></view>
+      <view class="points-total">累计：{{points.totalPoint||0}}</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">邀请信息</view>
+      <view class="row"><text>邀请码</text><text>{{invite.inviteCode || '-'}}</text></view>
+      <view class="row"><text>已邀请</text><text class="highlight">{{invite.inviteNum || 0}} 人</text></view>
+    </view>
+
+    <button class="logout-btn" bindtap="doLogout">退出登录</button>
+  </view>
+</view>

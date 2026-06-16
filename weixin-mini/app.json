@@ -1,0 +1,30 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/member/member",
+    "pages/my-tasks/my-tasks",
+    "pages/profile/profile",
+    "pages/task-detail/task-detail"
+  ],
+  "tabBar": {
+    "color": "#666",
+    "selectedColor": "#0052D9",
+    "backgroundColor": "#fff",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "任务中心" },
+      { "pagePath": "pages/my-tasks/my-tasks", "text": "我的任务" },
+      { "pagePath": "pages/member/member", "text": "会员" },
+      { "pagePath": "pages/profile/profile", "text": "个人" }
+    ]
+  },
+  "window": {
+    "navigationBarBackgroundColor": "#0052D9",
+    "navigationBarTitleText": "NeoApp",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F3F3F3",
+    "backgroundTextStyle": "light"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

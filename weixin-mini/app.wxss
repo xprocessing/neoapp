@@ -1,0 +1,3 @@
+page { background: #F3F3F3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto; }
+.mt { margin-top: 8px; }
+.mb { margin-bottom: 8px; }

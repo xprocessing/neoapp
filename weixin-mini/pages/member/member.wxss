@@ -1,0 +1,11 @@
+.container { padding: 16px; }
+.header { font-size: 20px; font-weight: bold; margin-bottom: 16px; }
+.info-box { background: linear-gradient(135deg, #0052D9, #618DFF); color: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px; text-align: center; }
+.status-text { font-size: 20px; font-weight: bold; }
+.expire { font-size: 13px; opacity: 0.8; }
+.empty { text-align: center; padding: 60px 0; color: #999; font-size: 14px; }
+.pkg-card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; text-align: center; }
+.pkg-name { font-size: 17px; font-weight: bold; }
+.pkg-price { font-size: 30px; font-weight: bold; color: #f60; margin: 8px 0; }
+.pkg-info { font-size: 14px; color: #666; margin-bottom: 12px; }
+.buy-btn { background: #0052D9; color: #fff; border-radius: 8px; font-size: 15px; }
