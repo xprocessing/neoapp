@@ -1,0 +1,9 @@
+{
+  "name": "entry",
+  "version": "1.0.0",
+  "description": "NeoApp 主入口模块",
+  "main": "",
+  "author": "NeoApp",
+  "license": "",
+  "dependencies": {}
+}

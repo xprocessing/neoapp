@@ -1,0 +1,26 @@
+<view class="page">
+  <!-- Hero -->
+  <view class="hero">
+    <view class="logo">N</view>
+    <view class="hero-title">NeoApp</view>
+    <view class="hero-desc">让业务管理更简单高效</view>
+    <button class="hero-btn" type="primary">立即开始</button>
+  </view>
+
+  <!-- Features -->
+  <view class="features">
+    <view class="section-title">核心功能</view>
+    <view class="feature-grid">
+      <view class="feature-card" wx:for="{{features}}" wx:key="title">
+        <view class="feature-icon {{item.bgClass}}">{{item.emoji}}</view>
+        <view class="feature-title">{{item.title}}</view>
+        <view class="feature-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- Footer -->
+  <view class="footer">
+    <text>© {{year}} NeoApp. All Rights Reserved.</text>
+  </view>
+</view>

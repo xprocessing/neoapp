@@ -1,0 +1,9 @@
+{
+  "name": "neoapp",
+  "version": "1.0.0",
+  "description": "NeoApp 鸿蒙应用",
+  "main": "",
+  "author": "NeoApp",
+  "license": "",
+  "dependencies": {}
+}

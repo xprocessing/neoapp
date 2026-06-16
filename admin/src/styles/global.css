@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   全局样式 - NeoApp Admin
+   简约风格 + 全响应式
+   ============================================ */
+
+/* CSS 变量 - 与 TDesign 主题对齐 */
+:root {
+  --color-primary: #0052D9;
+  --color-primary-light: #366EF4;
+  --color-primary-lighter: #618DFF;
+  --color-bg: #F3F3F3;
+  --color-bg-white: #FFFFFF;
+  --color-bg-light: #FAFAFA;
+  --color-text-primary: #1D2129;
+  --color-text-secondary: #4E5969;
+  --color-text-tertiary: #86909C;
+  --color-success: #00A870;
+  --color-danger: #E34D59;
+  --color-warning: #ED7B2F;
+  --radius-card: 12px;
+  --radius-btn: 8px;
+  --radius-input: 6px;
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --transition-base: 0.3s ease;
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 64px;
+  --header-height: 56px;
+}
+
+/* 基础重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 14px;
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* ============================================
+   响应式断点
+   ============================================ */
+
+/* 手机端 < 768px */
+@media (max-width: 767px) {
+  :root {
+    --sidebar-width: 0px;
+    --sidebar-collapsed: 0px;
+  }
+  .hide-on-mobile {
+    display: none !important;
+  }
+}
+
+/* 平板端 768px ~ 1200px */
+@media (min-width: 768px) and (max-width: 1200px) {
+  .hide-on-tablet {
+    display: none !important;
+  }
+}
+
+/* PC端 > 1200px */
+@media (min-width: 1200px) {
+  .hide-on-desktop {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   通用工具类
+   ============================================ */
+
+.card-hover {
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity var(--transition-base);
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: transform var(--transition-base), opacity var(--transition-base);
+}
+.slide-left-enter-from {
+  transform: translateX(20px);
+  opacity: 0;
+}
+.slide-left-leave-to {
+  transform: translateX(-20px);
+  opacity: 0;
+}

@@ -1,0 +1,107 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #F0F5FF 0%, #FFFFFF 40%);
+}
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 80rpx 40rpx 60rpx;
+}
+
+.logo {
+  width: 120rpx;
+  height: 120rpx;
+  line-height: 120rpx;
+  margin: 0 auto 30rpx;
+  background: linear-gradient(135deg, #0052D9, #618DFF);
+  border-radius: 26rpx;
+  color: #fff;
+  font-size: 52rpx;
+  font-weight: bold;
+}
+
+.hero-title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #1D2129;
+  margin-bottom: 16rpx;
+}
+
+.hero-desc {
+  font-size: 28rpx;
+  color: #86909C;
+  margin-bottom: 48rpx;
+}
+
+.hero-btn {
+  width: 320rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 30rpx;
+  border-radius: 16rpx;
+}
+
+/* Features */
+.features {
+  padding: 40rpx 32rpx;
+}
+
+.section-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1D2129;
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+
+.feature-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20rpx;
+}
+
+.feature-card {
+  width: calc(50% - 10rpx);
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+  box-sizing: border-box;
+}
+
+.feature-icon {
+  width: 80rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  border-radius: 18rpx;
+  text-align: center;
+  font-size: 36rpx;
+  margin-bottom: 20rpx;
+}
+
+.bg-blue { background: #E8F2FF; }
+.bg-green { background: #E6F7EE; }
+.bg-orange { background: #FFF3E8; }
+.bg-purple { background: #F3E8FF; }
+
+.feature-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1D2129;
+  margin-bottom: 8rpx;
+}
+
+.feature-desc {
+  font-size: 24rpx;
+  color: #86909C;
+  line-height: 1.6;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 40rpx;
+  font-size: 22rpx;
+  color: #86909C;
+}
