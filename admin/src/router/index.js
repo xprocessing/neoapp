@@ -43,7 +43,13 @@ const routes = [
         path: 'points',
         name: 'Points',
         component: () => import('@/views/Points.vue'),
-        meta: { title: '积分管理', icon: 'coins' }
+        meta: { title: '用户积分' }
+      },
+      {
+        path: 'point-logs',
+        name: 'PointLogs',
+        component: () => import('@/views/PointLogs.vue'),
+        meta: { title: '积分流水' }
       },
       {
         path: 'invites',
@@ -68,6 +74,18 @@ const routes = [
         name: 'TaskPayLogs',
         component: () => import('@/views/TaskPayLogs.vue'),
         meta: { title: '打款日志' }
+      },
+      {
+        path: 'members',
+        name: 'MemberManage',
+        component: () => import('@/views/MemberManage.vue'),
+        meta: { title: '套餐管理' }
+      },
+      {
+        path: 'member-users',
+        name: 'MemberUsers',
+        component: () => import('@/views/MemberUsers.vue'),
+        meta: { title: '用户会员' }
       }
     ]
   },

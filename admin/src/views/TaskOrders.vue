@@ -27,8 +27,8 @@
         <template #auditTime="{ row }"><span class="text-xs">{{ fmt(row.auditTime) || '-' }}</span></template>
         <template #operation="{ row }">
           <t-space size="small">
-            <t-button v-if="row.auditStatus===2" variant="text" theme="success" size="small" @click="audit(row,3,true)">通过</t-button>
-            <t-button v-if="row.auditStatus===2" variant="text" theme="danger" size="small" @click="audit(row,4,false)">驳回</t-button>
+            <t-button v-if="row.auditStatus===2" variant="text" theme="success" size="small" @click="audit(row.id,3)">审核通过</t-button>
+            <t-button v-if="row.auditStatus===2||row.auditStatus===3" variant="text" theme="danger" size="small" @click="audit(row.id,4)">驳回</t-button>
             <t-button v-if="row.auditStatus===3&&row.grantPay===0" variant="text" theme="warning" size="small" @click="grant(row.id)">授权打款</t-button>
           </t-space>
         </template>
@@ -72,10 +72,11 @@ async function fetchOrders() {
 }
 function onPg(p){pg.current=p.current;fetchOrders()}
 
-async function audit(row,status,grantPay){
+async function audit(id, status){
   const note = status===3?'审核通过':(prompt('驳回原因:')||'')
-  await request.put(`/admin/tasks/orders/${row.id}/audit`,{auditStatus:status,auditNote:note,grantPay:grantPay})
-  MessagePlugin.success('已审核');fetchOrders()
+  await request.put(`/admin/tasks/orders/${id}/audit`,{auditStatus:status,auditNote:note,grantPay:false})
+  MessagePlugin.success(status===3?'审核通过':'已驳回')
+  fetchOrders()
 }
 async function grant(id){await request.put(`/admin/tasks/orders/${id}/grant`);MessagePlugin.success('已授权打款');fetchOrders()}
 

@@ -66,6 +66,44 @@ public class WechatPayService {
     }
 
     /**
+     * 创建 JSAPI/H5 支付订单
+     * @return { prepay_id, h5_url }
+     */
+    public JsonNode createPayOrder(String outTradeNo, String description, int amount, String openid, String clientIp) throws Exception {
+        if (!isConfigured()) throw new IllegalStateException("微信支付未配置");
+
+        var body = new java.util.LinkedHashMap<String, Object>();
+        body.put("appid", props.getAppId());
+        body.put("mchid", props.getMchId());
+        body.put("description", description);
+        body.put("out_trade_no", outTradeNo);
+        body.put("notify_url", props.getNotifyUrl() != null ? props.getNotifyUrl() : "");
+        var amt = new java.util.LinkedHashMap<String, Object>(); amt.put("total", amount); amt.put("currency", "CNY");
+        body.put("amount", amt);
+        var payer = new java.util.LinkedHashMap<String, Object>(); payer.put("openid", openid != null ? openid : "");
+        body.put("payer", payer);
+        var scene = new java.util.LinkedHashMap<String, Object>(); scene.put("payer_client_ip", clientIp);
+        body.put("scene_info", scene);
+
+        String json = mapper.writeValueAsString(body);
+        String url = "https://api.mch.weixin.qq.com/v3/pay/transactions/h5";
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url)).header("Content-Type", "application/json").header("Accept", "application/json")
+            .header("Authorization", buildAuthHeader("POST", url, json))
+            .POST(HttpRequest.BodyPublishers.ofString(json)).build();
+
+        HttpResponse<String> resp = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        JsonNode result = mapper.readTree(resp.body());
+        if (resp.statusCode() == 200) {
+            log.info("WechatPay order created: outTradeNo={}, prepay_id={}", outTradeNo, result.get("prepay_id").asText());
+            return result;
+        } else {
+            String errMsg = result.has("message") ? result.get("message").asText() : "unknown";
+            throw new RuntimeException("微信下单失败: " + errMsg);
+        }
+    }
+
+    /**
      * 企业付款到零钱（单笔）
      * @return { out_bill_no, state, transfer_bill_no }
      */

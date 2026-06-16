@@ -14,6 +14,7 @@
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/controller/DashboardController.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/controller/HealthController.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/controller/InviteController.java
+/Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/controller/MemberController.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/controller/PointController.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/controller/SysConfigController.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/controller/TaskController.java
@@ -43,6 +44,8 @@
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/entity/BaseEntity.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/entity/InviteRewardLog.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/entity/InviteUser.java
+/Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/entity/MemberPackage.java
+/Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/entity/MemberUser.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/entity/PointLog.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/entity/PointUser.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/entity/SysConfig.java
@@ -55,6 +58,8 @@
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/mapper/AdminUserMapper.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/mapper/InviteRewardLogMapper.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/mapper/InviteUserMapper.java
+/Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/mapper/MemberPackageMapper.java
+/Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/mapper/MemberUserMapper.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/mapper/PointLogMapper.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/mapper/PointUserMapper.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/mapper/SysConfigMapper.java
@@ -68,6 +73,8 @@
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/CosService.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/InviteRewardLogService.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/InviteUserService.java
+/Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/MemberPackageService.java
+/Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/MemberUserService.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/PointLogService.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/PointUserService.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/SysConfigService.java
@@ -83,6 +90,8 @@
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/AdminUserServiceImpl.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/InviteRewardLogServiceImpl.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/InviteUserServiceImpl.java
+/Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/MemberPackageServiceImpl.java
+/Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/MemberUserServiceImpl.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/PointLogServiceImpl.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/PointUserServiceImpl.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/SysConfigServiceImpl.java

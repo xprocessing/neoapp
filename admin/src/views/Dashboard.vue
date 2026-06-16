@@ -54,7 +54,8 @@
         <router-link to="/tasks"><t-button variant="outline" size="small"><Plus class="w-3 h-3 mr-1" />发布任务</t-button></router-link>
         <router-link to="/task-orders"><t-button variant="outline" size="small"><CheckCircle class="w-3 h-3 mr-1" />审核订单</t-button></router-link>
         <router-link to="/task-pay-logs"><t-button variant="outline" size="small"><DollarSign class="w-3 h-3 mr-1" />打款日志</t-button></router-link>
-        <router-link to="/points"><t-button variant="outline" size="small"><Coins class="w-3 h-3 mr-1" />积分管理</t-button></router-link>
+        <router-link to="/points"><t-button variant="outline" size="small"><Coins class="w-3 h-3 mr-1" />用户积分</t-button></router-link>
+        <router-link to="/point-logs"><t-button variant="outline" size="small"><ScrollText class="w-3 h-3 mr-1" />积分流水</t-button></router-link>
       </div>
     </div>
   </div>
@@ -62,7 +63,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import { Users, ClipboardList, FileText, DollarSign, Plus, CheckCircle, Coins } from 'lucide-vue-next'
+import { Users, ClipboardList, FileText, DollarSign, Plus, CheckCircle, Coins, ScrollText } from 'lucide-vue-next'
 import request from '@/utils/request'
 
 const stats = reactive({

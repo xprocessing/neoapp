@@ -192,6 +192,127 @@ cd web && npm install && npm run dev
 | **微信回调** | | | |
 | 支付回调 | POST | `/api/public/wechat-pay/callback` | 微信通知 |
 
+## 部署说明
+
+### 环境要求
+
+| 依赖 | 版本 |
+|------|------|
+| JDK | 21+ |
+| Maven | 3.8+ |
+| Node.js | 18+ |
+| MySQL | 8.0+ |
+| Nginx | 可选（反向代理） |
+
+### 1. 数据库初始化
+
+```bash
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS neoapp DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u root -p neoapp < backend/src/main/resources/db/schema.sql
+```
+
+### 2. 配置修改
+
+**`backend/src/main/resources/application-dev.yml`**
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/neoapp?...      # 修改数据库连接
+    username: root                                       # 修改用户名
+    password: your_password                              # 修改密码
+
+cos:                                                    # 腾讯云 COS（头像/图片上传）
+  secret-id: your_secret_id
+  secret-key: your_secret_key
+  region: ap-shanghai
+  bucket: your-bucket-name
+
+wechat:
+  oauth:                                                # 微信登录
+    app-id: your_app_id
+    app-secret: your_app_secret
+    redirect-uri: https://your-domain.com/login
+  pay:                                                  # 微信支付
+    app-id: your_app_id
+    mch-id: your_mch_id
+    api-v3-key: your_api_v3_key
+    mch-serial-no: your_cert_serial_no
+    private-key-path: /path/to/apiclient_key.pem
+    notify-url: https://your-domain.com/api/public/wechat-pay/callback
+```
+
+### 3. 后端打包与运行
+
+```bash
+# 开发环境
+cd backend
+mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+# 生产环境（打包 JAR）
+mvn clean package -DskipTests
+java -jar target/neoapp-backend-*.jar --spring.profiles.active=prod
+```
+
+### 4. 前端构建
+
+```bash
+# 管理后台
+cd admin
+npm install
+npm run build           # 产出 dist/ 静态文件
+
+# Web 前端
+cd web
+npm install
+npm run build           # 产出 dist/ 静态文件
+```
+
+### 5. Nginx 配置（推荐）
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    # 管理后台
+    location /admin/ {
+        alias /path/to/admin/dist/;
+        try_files $uri $uri/ /admin/index.html;
+    }
+
+    # Web 前端
+    location / {
+        root /path/to/web/dist/;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # API 代理
+    location /api/ {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 120s;
+    }
+}
+```
+
+### 6. 环境变量（可选替代配置文件）
+
+启动时可通过环境变量覆盖配置：
+
+```bash
+export COS_SECRET_ID=xxx
+export COS_SECRET_KEY=xxx
+export COS_REGION=ap-shanghai
+export COS_BUCKET=xxx
+```
+
+Spring Boot 会自动将 `COS_SECRET_ID` 映射到 `cos.secret-id`。
+
+> ⚠️ **生产环境**务必修改 `application.yml` 中 `jwt.secret` 为强随机字符串，并关闭 MyBatis SQL 日志。
+
 ## 数据库表结构
 
 ### 业务用户模块（C端）

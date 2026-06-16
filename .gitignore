@@ -1,0 +1,4 @@
+node_modules
+*.jar
+*.class
+backend/src/main/resources/application-dev.yml

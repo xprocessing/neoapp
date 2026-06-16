@@ -118,7 +118,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import {
-  Home, LayoutDashboard, Users, Shield, Coins, UsersRound, ListTodo, ClipboardCheck, DollarSign, Settings, Bell,
+  Home, LayoutDashboard, Users, Shield, Coins, ScrollText, UsersRound, ListTodo, ClipboardCheck, DollarSign, Crown, UserCheck, Settings, Bell,
   ChevronRight, ChevronLeft, ChevronDown, Menu
 } from 'lucide-vue-next'
 
@@ -134,11 +134,14 @@ const menuItems = [
   { path: '/dashboard', label: '仪表盘', icon: LayoutDashboard },
   { path: '/admins', label: '管理员管理', icon: Shield },
   { path: '/users', label: '用户管理', icon: Users },
-  { path: '/points', label: '积分管理', icon: Coins },
+  { path: '/points', label: '用户积分', icon: Coins },
+  { path: '/point-logs', label: '积分流水', icon: ScrollText },
   { path: '/invites', label: '邀请管理', icon: UsersRound },
   { path: '/tasks', label: '任务管理', icon: ListTodo },
   { path: '/task-orders', label: '审核订单', icon: ClipboardCheck },
   { path: '/task-pay-logs', label: '打款日志', icon: DollarSign },
+  { path: '/members', label: '套餐管理', icon: Crown },
+  { path: '/member-users', label: '用户会员', icon: UserCheck },
   { path: '/settings', label: '系统设置', icon: Settings },
 ]
 

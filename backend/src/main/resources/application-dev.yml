@@ -18,7 +18,7 @@ spring:
 # Tencent Cloud COS 对象存储
 cos:
   secret-id: AKID04ye5HExSjma9Tu63lERPAh5QjqkcHhe
-  secret-key: oNhmkfPwERPCk37kk1Yt30lJfokV1Up9PV
+  secret-key: oNhmkfPwERPCk371Yt30lJfokV1Up9PV
   region: ap-shanghai
   bucket: neoimage-1251198067
 

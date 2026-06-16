@@ -47,6 +47,12 @@ const routes = [
         name: 'MyTasks',
         component: () => import('@/views/MyTasks.vue'),
         meta: { title: '我的任务', requiresAuth: true }
+      },
+      {
+        path: 'member',
+        name: 'Member',
+        component: () => import('@/views/Member.vue'),
+        meta: { title: '会员中心', requiresAuth: true }
       }
     ]
   },

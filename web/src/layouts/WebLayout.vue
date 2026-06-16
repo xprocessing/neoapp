@@ -38,6 +38,7 @@
           <template v-if="isLoggedIn">
             <router-link to="/tasks" class="hidden sm:inline-flex items-center px-3 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] rounded-[var(--radius-btn)] hover:bg-gray-50 transition-all">任务中心</router-link>
             <router-link to="/my-tasks" class="hidden sm:inline-flex items-center px-3 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] rounded-[var(--radius-btn)] hover:bg-gray-50 transition-all">我的任务</router-link>
+            <router-link to="/member" class="hidden sm:inline-flex items-center px-3 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] rounded-[var(--radius-btn)] hover:bg-gray-50 transition-all">会员中心</router-link>
             <router-link
               to="/profile"
               class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] rounded-[var(--radius-btn)] hover:bg-gray-50 transition-all"
@@ -94,6 +95,7 @@
               <router-link to="/tasks" class="block px-4 py-3 text-sm text-[var(--color-text-secondary)] hover:bg-blue-50/50 rounded-lg transition-colors" @click="mobileMenuOpen = false">任务中心</router-link>
               <template v-if="isLoggedIn">
                 <router-link to="/my-tasks" class="block px-4 py-3 text-sm text-[var(--color-text-secondary)] hover:bg-blue-50/50 rounded-lg transition-colors" @click="mobileMenuOpen = false">我的任务</router-link>
+                <router-link to="/member" class="block px-4 py-3 text-sm text-[var(--color-text-secondary)] hover:bg-blue-50/50 rounded-lg transition-colors" @click="mobileMenuOpen = false">会员中心</router-link>
                 <router-link to="/profile" class="block px-4 py-3 text-sm text-[var(--color-text-secondary)] hover:bg-blue-50/50 rounded-lg transition-colors" @click="mobileMenuOpen = false">
                   个人中心
                 </router-link>
@@ -165,7 +167,7 @@
             <div class="w-6 h-6 rounded bg-gradient-to-br from-[#0052D9] to-[#618DFF] flex items-center justify-center text-white text-xs font-bold">N</div>
             <span class="text-xs text-white/40">NeoApp. All rights reserved.</span>
           </div>
-          <span class="text-xs text-white/30">京ICP备xxxxxxxx号</span>
+          <span class="text-xs text-white/30">浙ICP备2021037366号-1</span>
         </div>
       </div>
     </footer>
