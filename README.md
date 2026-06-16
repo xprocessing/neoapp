@@ -10,8 +10,8 @@
 | **管理端 (admin)** | Vue 3, Vite, TDesign Vue Next, Quill 富文本编辑器, Lucide Icons |
 | **Web 前端 (web)** | Vue 3, Vite, TDesign Vue Next, Lucide Icons |
 | **存储** | 腾讯云 COS 对象存储 |
-| **支付** | 微信支付 API v3（企业付款到零钱） |
-| **登录** | 微信 OAuth2 登录 |
+| **支付** | 微信支付 API v3（企业付款到零钱 + H5支付） |
+| **登录** | 手机号登录 + 微信 OAuth2 登录 |
 
 ## 项目结构
 
@@ -42,7 +42,6 @@ mysql -u root -p neoapp < backend/src/main/resources/db/schema.sql
 
 ```bash
 cd backend
-# 修改 application-dev.yml 中的数据库密码和 COS/微信配置
 mvn spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
@@ -75,35 +74,50 @@ cd web && npm install && npm run dev
 - 邀请码机制（注册绑定上级 + 奖励积分）
 
 ### 管理后台
-- **仪表盘** — 数据概览
-- **管理员管理** — 后台管理员 CRUD、最后登录/IP
-- **用户管理** — C 端用户列表、默认地址、最后登录IP
-- **积分管理** — 用户积分列表 + 积分流水
-- **邀请管理** — 邀请关系 + 奖励记录
-- **任务管理** — 发布/编辑/上下架任务，富文本详情
-- **审核订单** — 审核用户提交、通过/驳回、授权打款
-- **打款日志** — 微信支付打款流水
-- **系统设置** — sys_config 动态配置
+| 菜单 | 路由 | 功能 |
+|------|------|------|
+| 仪表盘 | `/dashboard` | 用户/任务/订单/打款实时统计 |
+| 管理员管理 | `/admins` | 后台管理员 CRUD + 最后登录IP |
+| 用户管理 | `/users` | C端用户列表 + 默认地址 + 最后登录IP |
+| 用户积分 | `/points` | 用户积分列表 + 搜索 + 查看流水 |
+| 积分流水 | `/point-logs` | 积分变动记录 + 类型筛选 |
+| 邀请管理 | `/invites` | 邀请关系 + 奖励记录 |
+| 任务管理 | `/tasks` | 发布/编辑任务（富文本+24h数量） |
+| 审核订单 | `/task-orders` | 审核通过/驳回/授权打款 |
+| 打款日志 | `/task-pay-logs` | 微信支付打款流水 |
+| 套餐管理 | `/members` | 会员套餐 CRUD |
+| 用户会员 | `/member-users` | 用户会员状态 + 到期时间 |
+| 系统设置 | `/settings` | sys_config 动态配置 |
 
 ### Web 前端
-- 任务中心（浏览/领取/提交/提现）
-- 个人中心（资料编辑、头像上传、地址管理、积分、邀请）
-- 微信登录/绑定
+- 首页任务展示 + 导航（任务中心/会员中心/个人中心/我的任务）
+- 任务中心（领取→查看详情→提交截图+订单号→审核状态→提现）
+- 会员中心（购买套餐 → 微信 H5 支付）
+- 个人中心（资料编辑、头像上传、地址管理、积分、邀请、绑定微信）
 
 ### 积分系统
 - 注册送积分（`sys_config.point_register` 可配置）
 - 邀请送积分（`sys_config.point_invite` 可配置）
-- 积分流水记录
+- 购买会员送积分（每个套餐独立配置）
+- 积分流水记录（来源：register/invite/member）
 
 ### 任务系统
-- 管理员发布任务（标题/封面/富文本详情/奖励/24小时数量）
-- 用户领取任务（同任务不重复，IP限制）
-- 用户提交截图+订单号
-- 管理员审核通过/驳回 + 授权打款
+- 管理员发布任务（标题/封面/富文本详情/奖励/24小时格子数量）
+- 用户领取任务（同任务不重复，IP限制天数额可配）
+- 用户提交截图（最多3张）+ 订单号
+- 管理员审核通过/驳回（已通过也可驳回）
+- 管理员授权打款（与审核独立操作）
 - 用户提现 → 微信商户付款到零钱
 
+### 会员套餐
+- 管理员管理套餐（名称/价格/天数/赠积分/排序/状态）
+- 用户浏览套餐、购买会员
+- 微信 H5 支付（未配置时直接开通）
+- 购买赠送积分
+
 ### 微信支付
-- 企业付款到零钱（API v3）
+- 企业付款到零钱（任务提现）
+- H5 支付（会员购买）
 - 支付回调处理
 - 打款日志追踪
 
@@ -128,7 +142,9 @@ cd web && npm install && npm run dev
 
 | 模块 | 方法 | 路径 | 说明 |
 |------|------|------|------|
+| **通用** | | | |
 | 健康检查 | GET | `/api/health` | 服务状态 |
+| 仪表盘 | GET | `/api/admin/dashboard/stats` | 统计数据 |
 | **C端认证** | | | |
 | 注册 | POST | `/api/auth/register` | 手机号注册 |
 | 登录 | POST | `/api/auth/login` | 手机号登录 |
@@ -142,40 +158,29 @@ cd web && npm install && npm run dev
 | 上传头像 | POST | `/api/user/upload/avatar` | COS上传 |
 | **收货地址** | | | |
 | 列表 | GET | `/api/user/addresses` | 我的地址 |
-| 新增 | POST | `/api/user/addresses` | 添加地址 |
-| 更新 | PUT | `/api/user/addresses/{id}` | 修改地址 |
-| 删除 | DELETE | `/api/user/addresses/{id}` | 删除地址 |
+| 新增 | POST | `/api/user/addresses` | 添加 |
+| 更新 | PUT | `/api/user/addresses/{id}` | 修改 |
+| 删除 | DELETE | `/api/user/addresses/{id}` | 删除 |
 | 设默认 | PUT | `/api/user/addresses/{id}/default` | 默认地址 |
-| **积分** | | | |
-| 我的积分 | GET | `/api/user/points` | 积分余额 |
-| 积分流水 | GET | `/api/user/points/logs` | 流水记录 |
-| **邀请** | | | |
-| 我的邀请 | GET | `/api/user/invites` | 邀请码+人数 |
-| **任务(C端)** | | | |
-| 任务列表 | GET | `/api/user/tasks` | 上架任务 |
-| 任务详情 | GET | `/api/user/tasks/{id}` | 任务详情 |
-| 领取任务 | POST | `/api/user/tasks/{id}/claim` | 领取 |
-| 我的订单 | GET | `/api/user/tasks/orders` | 订单列表 |
-| 提交订单 | PUT | `/api/user/tasks/orders/{id}/submit` | 提交截图 |
-| 领取奖励 | POST | `/api/user/tasks/orders/{id}/withdraw` | 提现打款 |
-| 打款日志 | GET | `/api/user/tasks/pay-logs` | 我的日志 |
-| **管理端-用户** | | | |
-| 用户列表 | GET | `/api/admin/users` | 分页+搜索 |
-| 用户详情 | GET | `/api/admin/users/{id}` | 详情 |
-| 更新用户 | PUT | `/api/admin/users/{id}` | 编辑 |
-| 删除用户 | DELETE | `/api/admin/users/{id}` | 逻辑删除 |
-| **管理端-管理员** | | | |
-| 管理员列表 | GET | `/api/admin/admins` | 分页 |
-| 新增管理员 | POST | `/api/admin/admins` | 创建 |
-| 更新管理员 | PUT | `/api/admin/admins/{id}` | 编辑 |
-| 删除管理员 | DELETE | `/api/admin/admins/{id}` | 删除 |
-| **管理端-积分** | | | |
+| **积分(C端)** | | | |
+| 我的积分 | GET | `/api/user/points` | 余额 |
+| 积分流水 | GET | `/api/user/points/logs` | 记录 |
+| **积分(管理端)** | | | |
 | 积分列表 | GET | `/api/admin/points` | 用户积分 |
 | 积分流水 | GET | `/api/admin/points/logs` | 流水 |
-| **管理端-邀请** | | | |
-| 邀请关系 | GET | `/api/admin/invites` | 关系列表 |
-| 奖励记录 | GET | `/api/admin/invites/rewards` | 奖励列表 |
-| **管理端-任务** | | | |
+| **邀请** | | | |
+| 我的邀请 | GET | `/api/user/invites` | 邀请码+人数 |
+| 邀请关系 | GET | `/api/admin/invites` | 管理端列表 |
+| 奖励记录 | GET | `/api/admin/invites/rewards` | 管理端列表 |
+| **任务(C端)** | | | |
+| 任务列表 | GET | `/api/user/tasks` | 上架任务 |
+| 任务详情 | GET | `/api/user/tasks/{id}` | 详情 |
+| 领取任务 | POST | `/api/user/tasks/{id}/claim` | 领取 |
+| 我的订单 | GET | `/api/user/tasks/orders` | 订单列表 |
+| 提交订单 | PUT | `/api/user/tasks/orders/{id}/submit` | 提交截图+订单号 |
+| 领取奖励 | POST | `/api/user/tasks/orders/{id}/withdraw` | 提现 |
+| 打款日志 | GET | `/api/user/tasks/pay-logs` | 我打款日志 |
+| **任务(管理端)** | | | |
 | 任务列表 | GET | `/api/admin/tasks` | 分页+搜索 |
 | 创建任务 | POST | `/api/admin/tasks` | 发布 |
 | 更新任务 | PUT | `/api/admin/tasks/{id}` | 编辑 |
@@ -184,11 +189,32 @@ cd web && npm install && npm run dev
 | 审核操作 | PUT | `/api/admin/tasks/orders/{id}/audit` | 通过/驳回 |
 | 授权打款 | PUT | `/api/admin/tasks/orders/{id}/grant` | 授权 |
 | 打款日志 | GET | `/api/admin/tasks/pay-logs` | 日志 |
-| **管理端-配置** | | | |
+| **会员(C端)** | | | |
+| 套餐列表 | GET | `/api/user/member/packages` | 可用套餐 |
+| 会员状态 | GET | `/api/user/member/info` | 我的会员 |
+| 购买套餐 | POST | `/api/user/member/buy/{id}` | 发起支付 |
+| 支付回调 | POST | `/api/user/member/pay-callback` | 确认开通 |
+| **会员(管理端)** | | | |
+| 套餐列表 | GET | `/api/admin/member/packages` | 套餐 |
+| 创建套餐 | POST | `/api/admin/member/packages` | 新增 |
+| 更新套餐 | PUT | `/api/admin/member/packages/{id}` | 编辑 |
+| 删除套餐 | DELETE | `/api/admin/member/packages/{id}` | 删除 |
+| 用户会员 | GET | `/api/admin/member/users` | 列表+搜索 |
+| **用户管理** | | | |
+| 用户列表 | GET | `/api/admin/users` | 分页+搜索 |
+| 用户详情 | GET | `/api/admin/users/{id}` | 详情 |
+| 更新用户 | PUT | `/api/admin/users/{id}` | 编辑 |
+| 删除用户 | DELETE | `/api/admin/users/{id}` | 逻辑删除 |
+| **管理员管理** | | | |
+| 管理员列表 | GET | `/api/admin/admins` | 分页 |
+| 创建 | POST | `/api/admin/admins` | 新增 |
+| 更新 | PUT | `/api/admin/admins/{id}` | 编辑 |
+| 删除 | DELETE | `/api/admin/admins/{id}` | 删除 |
+| **系统配置** | | | |
 | 配置列表 | GET | `/api/admin/configs` | sys_config |
-| 创建配置 | POST | `/api/admin/configs` | 新增 |
-| 更新配置 | PUT | `/api/admin/configs/{id}` | 编辑 |
-| 删除配置 | DELETE | `/api/admin/configs/{id}` | 删除 |
+| 创建 | POST | `/api/admin/configs` | 新增 |
+| 更新 | PUT | `/api/admin/configs/{id}` | 编辑 |
+| 删除 | DELETE | `/api/admin/configs/{id}` | 删除 |
 | **微信回调** | | | |
 | 支付回调 | POST | `/api/public/wechat-pay/callback` | 微信通知 |
 
@@ -202,116 +228,45 @@ cd web && npm install && npm run dev
 | Maven | 3.8+ |
 | Node.js | 18+ |
 | MySQL | 8.0+ |
-| Nginx | 可选（反向代理） |
+| Nginx | 可选 |
 
-### 1. 数据库初始化
+### 配置
 
-```bash
-mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS neoapp DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root -p neoapp < backend/src/main/resources/db/schema.sql
-```
-
-### 2. 配置修改
-
-**`backend/src/main/resources/application-dev.yml`**
+`backend/src/main/resources/application-dev.yml` 需要配置：
 
 ```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/neoapp?...      # 修改数据库连接
-    username: root                                       # 修改用户名
-    password: your_password                              # 修改密码
-
-cos:                                                    # 腾讯云 COS（头像/图片上传）
-  secret-id: your_secret_id
-  secret-key: your_secret_key
-  region: ap-shanghai
-  bucket: your-bucket-name
-
-wechat:
-  oauth:                                                # 微信登录
-    app-id: your_app_id
-    app-secret: your_app_secret
-    redirect-uri: https://your-domain.com/login
-  pay:                                                  # 微信支付
-    app-id: your_app_id
-    mch-id: your_mch_id
-    api-v3-key: your_api_v3_key
-    mch-serial-no: your_cert_serial_no
-    private-key-path: /path/to/apiclient_key.pem
-    notify-url: https://your-domain.com/api/public/wechat-pay/callback
+spring.datasource     # 数据库连接
+cos                   # 腾讯云 COS（头像/图片上传）
+wechat.oauth          # 微信登录（AppID/AppSecret/回调URL）
+wechat.pay            # 微信支付（商户号/APIv3密钥/证书/回调URL）
+jwt.secret            # 生产环境务必修改为强随机字符串
 ```
 
-### 3. 后端打包与运行
+### 构建部署
 
 ```bash
-# 开发环境
-cd backend
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
-
-# 生产环境（打包 JAR）
-mvn clean package -DskipTests
+# 后端打包
+cd backend && mvn clean package -DskipTests
 java -jar target/neoapp-backend-*.jar --spring.profiles.active=prod
+
+# 前端构建
+cd admin && npm run build    # 产出 dist/
+cd web && npm run build      # 产出 dist/
 ```
 
-### 4. 前端构建
-
-```bash
-# 管理后台
-cd admin
-npm install
-npm run build           # 产出 dist/ 静态文件
-
-# Web 前端
-cd web
-npm install
-npm run build           # 产出 dist/ 静态文件
-```
-
-### 5. Nginx 配置（推荐）
+### Nginx 配置
 
 ```nginx
 server {
     listen 80;
     server_name your-domain.com;
 
-    # 管理后台
-    location /admin/ {
-        alias /path/to/admin/dist/;
-        try_files $uri $uri/ /admin/index.html;
-    }
-
-    # Web 前端
-    location / {
-        root /path/to/web/dist/;
-        try_files $uri $uri/ /index.html;
-    }
-
-    # API 代理
-    location /api/ {
-        proxy_pass http://127.0.0.1:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_read_timeout 120s;
-    }
+    location / { root /path/to/web/dist/; try_files $uri /index.html; }
+    location /api/ { proxy_pass http://127.0.0.1:8080; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; }
 }
 ```
 
-### 6. 环境变量（可选替代配置文件）
-
-启动时可通过环境变量覆盖配置：
-
-```bash
-export COS_SECRET_ID=xxx
-export COS_SECRET_KEY=xxx
-export COS_REGION=ap-shanghai
-export COS_BUCKET=xxx
-```
-
-Spring Boot 会自动将 `COS_SECRET_ID` 映射到 `cos.secret-id`。
-
-> ⚠️ **生产环境**务必修改 `application.yml` 中 `jwt.secret` 为强随机字符串，并关闭 MyBatis SQL 日志。
+> ⚠️ **生产环境**务必修改 `jwt.secret` 为强随机字符串，关闭 MyBatis SQL 日志。
 
 ## 数据库表结构
 
@@ -344,14 +299,20 @@ Spring Boot 会自动将 `COS_SECRET_ID` 映射到 `cos.secret-id`。
 ### 任务模块
 | 表名 | 说明 |
 |------|------|
-| `task_info` | 任务配置（标题/封面/详情/奖励/24小时数量） |
-| `task_user_order` | 用户订单（领取→提交→审核→提现全流程） |
+| `task_info` | 任务配置（标题/封面/富文本/奖励/24h数量） |
+| `task_user_order` | 用户订单（领取→提交→审核→提现） |
 | `task_pay_log` | 微信打款日志 |
+
+### 会员模块
+| 表名 | 说明 |
+|------|------|
+| `member_package` | 会员套餐（名称/价格/天数/赠积分） |
+| `member_user` | 用户会员（是否会员/到期时间） |
 
 ### 系统配置
 | 表名 | 说明 |
 |------|------|
-| `sys_config` | 系统配置（key-value，含积分规则/IP限制等） |
+| `sys_config` | 系统配置（key-value） |
 
 ## 系统配置项
 
