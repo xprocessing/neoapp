@@ -1,6 +1,6 @@
 # NeoApp
 
-多端全栈应用，涵盖管理后台、Web 前端、微信小程序、Android/iOS/Harmony 移动端。
+多端全栈应用，涵盖管理后台、Web 前端、微信小程序、Android/iOS/Harmony 移动端。快捷开发框架
 
 ## 技术栈
 
