@@ -23,7 +23,7 @@
           >
             {{ item.label }}
           </a>
-          <router-link to="/tasks" class="px-4 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] rounded-[var(--radius-btn)] hover:bg-blue-50/50 transition-all">任务中心</router-link>
+          
         </nav>
 
         <!-- 右侧操作 -->
@@ -201,7 +201,6 @@ function handleLogout() {
 const navItems = [
   { label: '首页', href: '/' },
   { label: '产品', href: '#features' },
-  { label: '关于我们', href: '#about' },
-  { label: '联系我们', href: '#contact' },
+
 ]
 </script>
