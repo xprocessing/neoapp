@@ -11,6 +11,7 @@
 | **后端** | Java 21, Spring Boot 3.4.1, MyBatis-Plus 3.5.7, Spring Security, JWT, MySQL 8.0 |
 | **管理端 (admin)** | Vue 3, Vite, TDesign Vue Next, Quill 富文本编辑器, Lucide Icons |
 | **Web 前端 (web)** | Vue 3, Vite, TDesign Vue Next, Lucide Icons |
+| **微信小程序** | 原生微信小程序（任务中心/会员/个人中心） |
 | **存储** | 腾讯云 COS 对象存储 |
 | **支付** | 微信支付 API v3（企业付款到零钱 + H5支付） |
 | **登录** | 手机号登录 + 微信 OAuth2 登录 |
@@ -20,9 +21,9 @@
 ```
 neoapp/
 ├── backend/          # Spring Boot 后端 (端口 8080)
-├── admin/            # 管理后台 (Vue 3)
+├── admin/            # 管理后台 (Vue 3, 生产构建 base=/admin/)
 ├── web/              # Web 前端 (Vue 3)
-├── wxmini/           # 微信小程序
+├── weixin-mini/      # 微信小程序 (原生)
 ├── android/          # Android
 ├── ios/              # iOS
 ├── harmony/          # HarmonyOS
@@ -96,6 +97,14 @@ cd web && npm install && npm run dev
 - 任务中心（领取→查看详情→提交截图+订单号→审核状态→提现）
 - 会员中心（购买套餐 → 微信 H5 支付）
 - 个人中心（资料编辑、头像上传、地址管理、积分、邀请、绑定微信）
+
+### 微信小程序
+| 标签 | 功能 |
+|------|------|
+| 任务 | 任务列表 + 一键领取 |
+| 会员 | 会员状态 + 套餐购买 |
+| 我的 | 已领任务订单 + 提现 |
+| 个人 | 微信登录 + 积分/邀请信息 |
 
 ### 积分系统
 - 注册送积分（`sys_config.point_register` 可配置）
@@ -249,23 +258,53 @@ jwt.secret            # 生产环境务必修改为强随机字符串
 ```bash
 # 后端打包
 cd backend && mvn clean package -DskipTests
-java -jar target/neoapp-backend-*.jar --spring.profiles.active=prod
+java -jar target/neoapp-backend-*.jar --spring.profiles.active=prod --server.port=8081
 
 # 前端构建
-cd admin && npm run build    # 产出 dist/
+cd admin && npm run build    # 产出 dist/ (base=/admin/)
 cd web && npm run build      # 产出 dist/
 ```
 
-### Nginx 配置
+> 管理后台构建使用 `base=/admin/`（`vite.config.js` 生产环境自动设置）。
+
+### Nginx 配置（宝塔面板示例）
 
 ```nginx
 server {
     listen 80;
     server_name your-domain.com;
 
-    location / { root /path/to/web/dist/; try_files $uri /index.html; }
-    location /api/ { proxy_pass http://127.0.0.1:8080; proxy_set_header Host $host; proxy_set_header X-Real-IP $remote_addr; }
+    # API 代理到后端
+    location /api/ {
+        proxy_pass http://127.0.0.1:8081;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 120s;
+        client_max_body_size 6M;
+    }
+
+    # 管理后台 (base=/admin/)
+    location /admin/ {
+        alias /www/wwwroot/.../neoapp/admin/dist/;
+        try_files $uri $uri/ /admin/index.html;
+    }
+
+    # Web 前端
+    location / {
+        root /www/wwwroot/.../neoapp/web/dist/;
+        try_files $uri $uri/ /index.html;
+    }
 }
+```
+
+### 微信小程序
+
+```bash
+cd weixin-mini
+# 用微信开发者工具打开此目录
+# 修改 utils/request.js 中 baseUrl 为生产环境地址
+# 小程序后台配置 request 合法域名
 ```
 
 > ⚠️ **生产环境**务必修改 `jwt.secret` 为强随机字符串，关闭 MyBatis SQL 日志。

@@ -1,0 +1,52 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/neoapp?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: liulei0304
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      connection-timeout: 30000
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+
+# JWT 配置
+jwt:
+  secret: NeoAppSecretKey2026ForJwtTokenGenerationAndValidation
+  expiration: 86400000
+
+# Tencent Cloud COS
+cos:
+  secret-id: AKID04ye5HExSjma9Tu63lERPAh5QjqkcHhe
+  secret-key: oNhmkfPwERPCk371Yt30lJfokV1Up9PV
+  region: ap-shanghai
+  bucket: neoimage-1251198067
+
+# 微信配置
+wechat:
+  oauth:
+    app-id:
+    app-secret:
+    redirect-uri: http://localhost:3001/login
+  pay:
+    app-id:
+    mch-id:
+    api-v3-key:
+    mch-serial-no:
+    private-key-path:
+    notify-url:
+
+logging:
+  level:
+    com.neoapp: info
+    org.springframework.security: warn
+
+mybatis-plus:
+  configuration:
+    # 生产环境关闭 SQL 日志
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl

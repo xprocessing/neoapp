@@ -27,6 +27,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/health/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/user/tasks", "/api/user/member/packages").permitAll()
                 .requestMatchers("/api/user/**").authenticated()
                 .requestMatchers("/api/admin/**").authenticated()
                 .anyRequest().authenticated()
