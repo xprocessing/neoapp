@@ -115,10 +115,10 @@ public class WechatPayService {
         // 转账场景报备信息（微信要求必填，场景1000现金营销需2项）
         var reportInfo1 = new java.util.LinkedHashMap<String, Object>();
         reportInfo1.put("info_type", "活动名称");
-        reportInfo1.put("info_content", remark != null ? remark : "任务奖励");
+        reportInfo1.put("info_content", remark != null ? remark : "活动奖励");
         var reportInfo2 = new java.util.LinkedHashMap<String, Object>();
         reportInfo2.put("info_type", "奖励说明");
-        reportInfo2.put("info_content", "完成平台任务获得现金奖励");
+        reportInfo2.put("info_content", "完成平台活动获得现金奖励");
 
         var body = new java.util.LinkedHashMap<String, Object>();
         body.put("appid", props.getAppId());
@@ -126,7 +126,7 @@ public class WechatPayService {
         body.put("transfer_scene_id", "1000");
         body.put("openid", openid);
         body.put("transfer_amount", amount);
-        body.put("transfer_remark", remark != null ? remark : "任务奖励");
+        body.put("transfer_remark", remark != null ? remark : "活动奖励");
         body.put("notify_url", props.getNotifyUrl() != null ? props.getNotifyUrl() : "");
         body.put("transfer_scene_report_infos", java.util.List.of(reportInfo1, reportInfo2));
 
