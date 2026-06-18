@@ -28,12 +28,7 @@
 
         <!-- 右侧操作 -->
         <div class="flex items-center gap-3">
-          <a
-            href="/admin"
-            class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-sm text-[var(--color-primary)] border border-[var(--color-primary)] rounded-[var(--radius-btn)] hover:bg-[var(--color-primary)] hover:text-white transition-all font-medium"
-          >
-            管理后台
-          </a>
+        
           <!-- 已登录 -->
           <template v-if="isLoggedIn">
             <router-link to="/tasks" class="hidden sm:inline-flex items-center px-3 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] rounded-[var(--radius-btn)] hover:bg-gray-50 transition-all">任务中心</router-link>
@@ -166,6 +161,12 @@
           <div class="flex items-center gap-2">
             <div class="w-6 h-6 rounded bg-gradient-to-br from-[#0052D9] to-[#618DFF] flex items-center justify-center text-white text-xs font-bold">N</div>
             <span class="text-xs text-white/40">NeoApp. All rights reserved.</span>
+              <a
+            href="/admin/"
+            class="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-sm text-[var(--color-primary)] border border-[var(--color-primary)] rounded-[var(--radius-btn)] hover:bg-[var(--color-primary)] hover:text-white transition-all font-medium"
+          >
+            管理后台
+          </a>
           </div>
           <span class="text-xs text-white/30">浙ICP备2021037366号-1</span>
         </div>

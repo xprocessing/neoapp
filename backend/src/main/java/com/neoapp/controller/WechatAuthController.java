@@ -161,6 +161,7 @@ public class WechatAuthController {
             result.put("bound", uw != null);
             if (uw != null) {
                 result.put("openid", uw.getOpenid());
+                result.put("nickname", uw.getNickname() != null ? uw.getNickname() : "");
                 result.put("bindTime", uw.getCreateTime());
             }
         }
