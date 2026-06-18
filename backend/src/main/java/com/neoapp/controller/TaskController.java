@@ -280,7 +280,7 @@ public class TaskController {
                     openid,
                     order.getRewardAmount().multiply(new java.math.BigDecimal(100)).intValue(), // 分
                     null,
-                    "活动奖励"
+                    "消费体验补贴"
                 );
                 wechatPayService.updatePayLog(log, result);
                 if (log.getPayStatus() == 2) {
