@@ -153,6 +153,36 @@ CREATE TABLE IF NOT EXISTS `point_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='积分流水记录表';
 
 -- =====================================================
+-- 会员模块表
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS `member_package` (
+    `id`           BIGINT         NOT NULL AUTO_INCREMENT COMMENT '套餐ID',
+    `package_name` VARCHAR(100)   NOT NULL DEFAULT ''     COMMENT '套餐名称',
+    `price`        DECIMAL(10,2)  NOT NULL DEFAULT 0.00   COMMENT '套餐价格',
+    `day_num`      INT            NOT NULL DEFAULT 0      COMMENT '有效天数',
+    `give_point`   INT            NOT NULL DEFAULT 0      COMMENT '赠送积分',
+    `sort`         INT            NOT NULL DEFAULT 0      COMMENT '排序',
+    `status`       TINYINT        NOT NULL DEFAULT 1      COMMENT '状态：0下架 1上架',
+    `deleted`      TINYINT        NOT NULL DEFAULT 0      COMMENT '逻辑删除',
+    `create_time`  DATETIME       DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`  DATETIME       DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    INDEX `idx_status_sort` (`status`, `sort`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会员套餐表';
+
+CREATE TABLE IF NOT EXISTS `member_user` (
+    `id`          BIGINT   NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `user_id`     BIGINT   NOT NULL                COMMENT '用户ID',
+    `is_member`   TINYINT  NOT NULL DEFAULT 0      COMMENT '是否会员：0否 1是',
+    `expire_time` DATETIME DEFAULT NULL            COMMENT '会员过期时间',
+    `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '开通时间',
+    `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户会员表';
+
+-- =====================================================
 -- 邀请模块表
 -- =====================================================
 
