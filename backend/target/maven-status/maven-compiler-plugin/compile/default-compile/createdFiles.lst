@@ -30,10 +30,12 @@ com/neoapp/service/impl/PointUserServiceImpl.class
 com/neoapp/dto/UserProfileRequest.class
 com/neoapp/entity/UserInfo.class
 com/neoapp/mapper/UserAddressMapper.class
+com/neoapp/service/WechatQRCodeService$QRState.class
 com/neoapp/entity/PointLog.class
 com/neoapp/service/impl/InviteUserServiceImpl.class
 com/neoapp/entity/PointUser.class
 com/neoapp/NeoAppApplication.class
+com/neoapp/service/WechatQRCodeService.class
 com/neoapp/controller/InviteController.class
 com/neoapp/controller/WechatPayController.class
 com/neoapp/service/PointUserService.class

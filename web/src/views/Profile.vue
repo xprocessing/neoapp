@@ -322,10 +322,45 @@
 
         <!-- Wechat Bind -->
         <div class="mt-6 flex justify-center">
-          <t-button variant="outline" class="!border-green-500 !text-green-500" @click="bindWechat" :loading="wxBinding">
+          <t-button v-if="!wxBound" variant="outline" class="!border-green-500 !text-green-500" @click="openWechatQR" :loading="wxBinding">
             <svg class="w-4 h-4 mr-1" viewBox="0 0 24 24"><path fill="currentColor" d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18z"/></svg>绑定微信
           </t-button>
+          <t-tag v-else theme="success" variant="light" size="medium" class="cursor-pointer" @click="openWechatQR">
+            <svg class="w-3 h-3 inline mr-1" viewBox="0 0 24 24"><path fill="currentColor" d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18z"/></svg>已绑定微信
+          </t-tag>
         </div>
+
+        <!-- QR Code Dialog -->
+        <t-dialog v-model:visible="qrVisible" header="微信扫码绑定" :footer="false" width="360px" :close-on-overlay-click="false">
+          <div class="text-center py-4">
+            <!-- Pending -->
+            <div v-if="qrStatus === 'pending'">
+              <canvas ref="qrCanvas" class="mx-auto border border-gray-100 rounded-lg"></canvas>
+              <p class="text-sm text-[var(--color-text-secondary)] mt-4">请使用微信扫描二维码</p>
+              <t-loading size="small" class="mt-2" />
+              <p class="text-xs text-[var(--color-text-tertiary)] mt-1">等待扫码...</p>
+            </div>
+            <!-- Scanned -->
+            <div v-else-if="qrStatus === 'scanned'">
+              <div class="text-green-500 text-5xl mb-3">✓</div>
+              <p class="text-base font-semibold">扫码成功</p>
+              <p class="text-sm text-[var(--color-text-secondary)] mt-1" v-if="qrNickname">{{ qrNickname }}</p>
+              <t-button theme="primary" class="mt-4" :loading="qrBinding" @click="confirmQRBind">确认绑定</t-button>
+            </div>
+            <!-- Expired -->
+            <div v-else-if="qrStatus === 'expired'">
+              <div class="text-gray-300 text-5xl mb-3">⏱</div>
+              <p class="text-base text-[var(--color-text-secondary)]">二维码已过期</p>
+              <t-button variant="outline" class="mt-4" @click="refreshQR">重新获取</t-button>
+            </div>
+            <!-- Error -->
+            <div v-else-if="qrStatus === 'error'">
+              <div class="text-red-400 text-5xl mb-3">✗</div>
+              <p class="text-base text-[var(--color-text-secondary)]">获取二维码失败</p>
+              <t-button variant="outline" class="mt-4" @click="refreshQR">重试</t-button>
+            </div>
+          </div>
+        </t-dialog>
 
         <!-- Logout Button -->
         <div class="mt-3 flex justify-center">
@@ -339,10 +374,11 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { MessagePlugin } from 'tdesign-vue-next'
 import { LogOut, Edit3, Camera, Check, X, Plus, MapPin, Copy } from 'lucide-vue-next'
+import QRCode from 'qrcode'
 import request from '@/utils/request'
 
 const router = useRouter()
@@ -646,14 +682,98 @@ async function handleSetDefault(id) {
   }
 }
 
-// --- Wechat Bind ---
+// --- Wechat QR Bind ---
+const isMobile = /Android|iPhone|iPad|iPod|HarmonyOS|Mobile/i.test(navigator.userAgent)
 const wxBinding = ref(false)
+const wxBound = ref(false)
+const wxNickname = ref('')
+const qrVisible = ref(false)
+const qrStatus = ref('pending')
+const qrState = ref('')
+const qrNickname = ref('')
+const qrAvatar = ref('')
+const qrBinding = ref(false)
+const qrCanvas = ref(null)
+let qrTimer = null
 
-async function bindWechat() {
+async function fetchWechatBound() {
   try {
-    const { url } = await request.get('/auth/wechat/url', { params: { state: 'bind' } })
-    window.location.href = url
-  } catch {}
+    const res = await request.get('/auth/wechat/bound')
+    wxBound.value = res.bound
+    wxNickname.value = res.nickname || ''
+  } catch { /* ignore */ }
+}
+
+async function openWechatQR() {
+  if (isMobile) {
+    wxBinding.value = true
+    try {
+      const { url } = await request.get('/auth/wechat/url', { params: { state: 'bind' } })
+      window.location.href = url
+    } catch {} finally { wxBinding.value = false }
+    return
+  }
+  qrStatus.value = 'pending'
+  qrVisible.value = true
+  await generateQRCode()
+}
+
+async function generateQRCode() {
+  try {
+    const { state, qrUrl } = await request.post('/auth/wechat/qrcode/generate')
+    qrState.value = state
+    await QRCode.toCanvas(qrCanvas.value, qrUrl, { width: 220, margin: 1 })
+    qrStatus.value = 'pending'
+    startPolling()
+  } catch {
+    qrStatus.value = 'error'
+  }
+}
+
+function startPolling() {
+  stopPolling()
+  qrTimer = setInterval(async () => {
+    try {
+      if (!qrState.value) return
+      const res = await request.get('/auth/wechat/qrcode/status', { params: { state: qrState.value } })
+      if (res.status === 'scanned') {
+        qrStatus.value = 'scanned'
+        qrNickname.value = res.nickname || ''
+        qrAvatar.value = res.avatar || ''
+        stopPolling()
+      } else if (res.status === 'expired') {
+        qrStatus.value = 'expired'
+        stopPolling()
+      }
+    } catch {
+      // 继续轮询
+    }
+  }, 2000)
+}
+
+function stopPolling() {
+  if (qrTimer) { clearInterval(qrTimer); qrTimer = null }
+}
+
+async function confirmQRBind() {
+  qrBinding.value = true
+  try {
+    const res = await request.post('/auth/wechat/qrcode/bind', { state: qrState.value })
+    wxBound.value = true
+    wxNickname.value = qrNickname.value
+    qrVisible.value = false
+    stopPolling()
+    MessagePlugin.success('微信绑定成功')
+  } catch {
+    // handled by interceptor
+  } finally {
+    qrBinding.value = false
+  }
+}
+
+function refreshQR() {
+  qrStatus.value = 'pending'
+  generateQRCode()
 }
 
 // --- Logout ---
@@ -667,12 +787,13 @@ function handleLogout() {
 import { useRoute } from 'vue-router'
 const currentRoute = useRoute()
 onMounted(() => {
-  // 微信绑定回调
+  // 微信绑定回调（旧版重定向方式）
   const code = currentRoute.query.code
   const state = currentRoute.query.state
   if (code && state === 'bind') {
     request.post('/auth/wechat/bind', { code }).then(() => {
       MessagePlugin.success('微信绑定成功')
+      wxBound.value = true
       router.replace('/profile')
     }).catch(() => {})
     return
@@ -684,5 +805,10 @@ onMounted(() => {
   fetchAddresses()
   fetchPoints()
   fetchInviteInfo()
+  fetchWechatBound()
+})
+
+onUnmounted(() => {
+  stopPolling()
 })
 </script>

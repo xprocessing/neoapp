@@ -87,6 +87,7 @@
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/UserWechatService.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/WechatOAuthService.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/WechatPayService.java
+/Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/WechatQRCodeService.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/AdminUserServiceImpl.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/InviteRewardLogServiceImpl.java
 /Users/neo/neocode/neoapp/backend/src/main/java/com/neoapp/service/impl/InviteUserServiceImpl.java

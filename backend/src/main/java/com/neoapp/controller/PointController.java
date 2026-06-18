@@ -94,8 +94,9 @@ public class PointController {
 
         // 批量查用户信息
         List<Long> uids = p.getRecords().stream().map(PointLog::getUserId).distinct().toList();
-        Map<Long, UserInfo> userMap = userInfoService.listByIds(uids).stream()
-            .collect(Collectors.toMap(UserInfo::getId, u -> u));
+        Map<Long, UserInfo> userMap = uids.isEmpty() ? Map.of()
+            : userInfoService.listByIds(uids).stream()
+                .collect(Collectors.toMap(UserInfo::getId, u -> u));
 
         Page<PointLogVO> voPage = new Page<>();
         voPage.setCurrent(p.getCurrent());

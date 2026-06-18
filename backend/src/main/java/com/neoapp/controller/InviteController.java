@@ -87,8 +87,9 @@ public class InviteController {
 
         Set<Long> allIds = new HashSet<>();
         p.getRecords().forEach(r -> { allIds.add(r.getUserId()); allIds.add(r.getInviteUserId()); });
-        Map<Long, UserInfo> userMap = userInfoService.listByIds(allIds).stream()
-            .collect(Collectors.toMap(UserInfo::getId, u -> u));
+        Map<Long, UserInfo> userMap = allIds.isEmpty() ? Collections.emptyMap()
+            : userInfoService.listByIds(allIds).stream()
+                .collect(Collectors.toMap(UserInfo::getId, u -> u));
 
         Page<InviteRewardVO> voPage = new Page<>();
         voPage.setCurrent(p.getCurrent()); voPage.setSize(p.getSize()); voPage.setTotal(p.getTotal());
