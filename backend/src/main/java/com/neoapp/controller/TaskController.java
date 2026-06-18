@@ -25,6 +25,7 @@ public class TaskController {
     private final TaskPayLogService payLogService;
     private final SysConfigService sysConfigService;
     private final WechatPayService wechatPayService;
+    private final UserWechatService userWechatService;
     private final JwtUtil jwtUtil;
 
     // ==================== Admin ====================
@@ -113,6 +114,47 @@ public class TaskController {
             @RequestParam(defaultValue = "15") Integer size) {
         return Result.success(payLogService.page(new Page<>(page, size),
             new LambdaQueryWrapper<TaskPayLog>().orderByDesc(TaskPayLog::getCreateTime)));
+    }
+
+    /** 重新打款（管理端手动触发） */
+    @PostMapping("/api/admin/tasks/pay-logs/{id}/retry")
+    public Result<String> retryPay(@PathVariable Long id) {
+        TaskPayLog log = payLogService.getById(id);
+        if (log == null) return Result.notFound("打款记录不存在");
+        if (log.getPayStatus() == 2) return Result.badRequest("该笔已打款成功");
+        if (!wechatPayService.isConfigured()) return Result.badRequest("微信支付未配置");
+
+        // 获取用户 openid
+        String openid = getOpenidByUserId(log.getUserId());
+        if (openid == null || openid.isBlank()) return Result.badRequest("用户未绑定微信，无法打款");
+
+        log.setRetryCount(log.getRetryCount() + 1);
+        log.setPayStatus(1);
+        try {
+            JsonNode result = wechatPayService.transferToWallet(
+                openid,
+                log.getPayAmount().multiply(new java.math.BigDecimal(100)).intValue(),
+                null, "任务奖励"
+            );
+            wechatPayService.updatePayLog(log, result);
+            if (log.getPayStatus() == 2) {
+                TaskUserOrder order = orderService.getById(log.getOrderId());
+                if (order != null) { order.setWithdrawStatus(2); orderService.updateById(order); }
+            }
+            payLogService.updateById(log);
+            return Result.success(log.getPayStatus() == 2 ? "打款成功" : "处理中");
+        } catch (Exception e) {
+            log.setFailReason(e.getMessage());
+            payLogService.updateById(log);
+            return Result.badRequest("打款失败: " + e.getMessage());
+        }
+    }
+
+    /** 获取用户 openid */
+    private String getOpenidByUserId(Long userId) {
+        UserWechat uw = userWechatService.getOne(
+            new LambdaQueryWrapper<UserWechat>().eq(UserWechat::getUserId, userId));
+        return uw != null ? uw.getOpenid() : "";
     }
 
     // ==================== Web (C端) ====================
@@ -227,11 +269,15 @@ public class TaskController {
         order.setWithdrawStatus(1);
         orderService.updateById(order);
 
+        // 获取 openid（优先从订单，否则查用户绑定）
+        String openid = order.getOpenid() != null && !order.getOpenid().isBlank()
+            ? order.getOpenid() : getOpenidByUserId(userId);
+
         // 调用微信支付
         try {
-            if (wechatPayService.isConfigured()) {
+            if (wechatPayService.isConfigured() && openid != null && !openid.isBlank()) {
                 JsonNode result = wechatPayService.transferToWallet(
-                    order.getOpenid(),
+                    openid,
                     order.getRewardAmount().multiply(new java.math.BigDecimal(100)).intValue(), // 分
                     null,
                     "任务奖励"

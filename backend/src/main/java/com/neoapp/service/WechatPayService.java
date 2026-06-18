@@ -111,25 +111,35 @@ public class WechatPayService {
         if (!isConfigured()) throw new IllegalStateException("微信支付未配置");
 
         String outBillNo = "TR" + Instant.now().toEpochMilli() + UUID.randomUUID().toString().substring(0, 6);
-        String body = mapper.writeValueAsString(java.util.Map.of(
-            "appid", props.getAppId(),
-            "out_bill_no", outBillNo,
-            "transfer_scene_id", "1000",
-            "openid", openid,
-            "user_name", userName != null ? userName : "",
-            "transfer_amount", amount,
-            "transfer_remark", remark != null ? remark : "任务奖励",
-            "notify_url", props.getNotifyUrl() != null ? props.getNotifyUrl() : ""
-        ));
+
+        // 转账场景报备信息（微信要求必填，场景1000现金营销需2项）
+        var reportInfo1 = new java.util.LinkedHashMap<String, Object>();
+        reportInfo1.put("info_type", "活动名称");
+        reportInfo1.put("info_content", remark != null ? remark : "任务奖励");
+        var reportInfo2 = new java.util.LinkedHashMap<String, Object>();
+        reportInfo2.put("info_type", "奖励说明");
+        reportInfo2.put("info_content", "完成平台任务获得现金奖励");
+
+        var body = new java.util.LinkedHashMap<String, Object>();
+        body.put("appid", props.getAppId());
+        body.put("out_bill_no", outBillNo);
+        body.put("transfer_scene_id", "1000");
+        body.put("openid", openid);
+        body.put("transfer_amount", amount);
+        body.put("transfer_remark", remark != null ? remark : "任务奖励");
+        body.put("notify_url", props.getNotifyUrl() != null ? props.getNotifyUrl() : "");
+        body.put("transfer_scene_report_infos", java.util.List.of(reportInfo1, reportInfo2));
+
+        String jsonBody = mapper.writeValueAsString(body);
 
         String url = "https://api.mch.weixin.qq.com/v3/fund-app/mch-transfer/transfer-bills";
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url))
             .header("Content-Type", "application/json")
             .header("Accept", "application/json")
-            .header("Authorization", buildAuthHeader("POST", url, body))
+            .header("Authorization", buildAuthHeader("POST", url, jsonBody))
             .header("Wechatpay-Serial", props.getMchSerialNo())
-            .POST(HttpRequest.BodyPublishers.ofString(body))
+            .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
             .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());

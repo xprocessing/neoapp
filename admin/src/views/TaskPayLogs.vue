@@ -13,6 +13,9 @@
         <template #payTime="{ row }"><span class="text-xs">{{ fmt(row.payTime) || '-' }}</span></template>
         <template #applyTime="{ row }"><span class="text-xs text-[var(--color-text-tertiary)]">{{ fmt(row.applyTime) }}</span></template>
         <template #createTime="{ row }"><span class="text-xs text-[var(--color-text-tertiary)]">{{ fmt(row.createTime) }}</span></template>
+        <template #operation="{ row }">
+          <t-button v-if="row.payStatus!==2" variant="text" theme="primary" size="small" :loading="retryingId===row.id" @click="retryPay(row.id)">重新打款</t-button>
+        </template>
       </t-table>
     </div>
   </div>
@@ -20,6 +23,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import { MessagePlugin } from 'tdesign-vue-next'
 import request from '@/utils/request'
 
 const logData = ref([]); const loading = ref(false)
@@ -38,16 +42,27 @@ const logCols = [
   {colKey:'failReason',title:'失败原因',width:150,ellipsis:true},
   {colKey:'applyTime',title:'申请时间',width:170},
   {colKey:'payTime',title:'到账时间',width:170},
-  {colKey:'createTime',title:'创建时间',width:170},
+  {colKey:'operation',title:'操作',width:100},
 ]
 
 function fmt(t){if(!t)return'';const d=new Date(t);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
+
+const retryingId = ref(null)
 
 async function fetchLogs() {
   loading.value=true
   try{const r=await request.get('/admin/tasks/pay-logs',{params:{page:pg.current,size:pg.pageSize}});logData.value=r.records||[];pg.total=r.total||0}catch(e){}finally{loading.value=false}
 }
 function onPg(p){pg.current=p.current;fetchLogs()}
+
+async function retryPay(id) {
+  retryingId.value = id
+  try {
+    await request.post(`/admin/tasks/pay-logs/${id}/retry`)
+    MessagePlugin.success('打款已触发')
+    fetchLogs()
+  } catch {} finally { retryingId.value = null }
+}
 
 import { onMounted } from 'vue'
 onMounted(fetchLogs)
