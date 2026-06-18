@@ -24,4 +24,7 @@ public class UserInfoVO {
 
     /** 最后登录IP */
     private String lastLoginIp;
+
+    /** 绑定的微信昵称 */
+    private String wxNickname;
 }

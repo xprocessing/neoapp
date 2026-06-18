@@ -82,6 +82,7 @@ public class WechatAuthController {
         uw.setUserId(userId);
         uw.setOpenid(qs.openid);
         uw.setUnionid(qs.unionid);
+        uw.setNickname(qs.nickname);
         uw.setAppType("mp");
         userWechatService.save(uw);
         return Result.success();
@@ -139,6 +140,7 @@ public class WechatAuthController {
         uw.setUserId(vo.getId());
         uw.setOpenid(qs.openid);
         uw.setUnionid(qs.unionid);
+        uw.setNickname(qs.nickname);
         uw.setAppType("mp");
         userWechatService.save(uw);
 
@@ -268,6 +270,7 @@ public class WechatAuthController {
         uw.setUserId(userId);
         uw.setOpenid(wx.openid);
         uw.setUnionid(wx.unionid);
+        uw.setNickname(wx.nickname);
         uw.setAppType("mp");
         userWechatService.save(uw);
     }

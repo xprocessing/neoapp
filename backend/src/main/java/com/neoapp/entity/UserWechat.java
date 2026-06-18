@@ -22,6 +22,8 @@ public class UserWechat implements Serializable {
 
     private String appType;
 
+    private String nickname;
+
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 

@@ -25,6 +25,7 @@ public class UserService {
     private final SysConfigService sysConfigService;
     private final InviteUserService inviteUserService;
     private final InviteRewardLogService inviteRewardLogService;
+    private final UserWechatService userWechatService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
@@ -132,7 +133,7 @@ public class UserService {
         voPage.setTotal(page.getTotal());
         voPage.setRecords(page.getRecords().stream().map(this::toVO).toList());
 
-        // 批量填充默认地址
+        // 批量填充默认地址和微信昵称
         if (!voPage.getRecords().isEmpty()) {
             List<Long> userIds = voPage.getRecords().stream().map(UserInfoVO::getId).toList();
             Map<Long, String> addrMap = userAddressService.list(
@@ -144,7 +145,14 @@ public class UserService {
                 a -> a.getProvince() + a.getCity() + a.getDistrict() + " " + a.getDetail(),
                 (a, b) -> a
             ));
-            voPage.getRecords().forEach(vo -> vo.setDefaultAddress(addrMap.get(vo.getId())));
+            Map<Long, String> wxMap = userWechatService.list(
+                new LambdaQueryWrapper<UserWechat>().in(UserWechat::getUserId, userIds)
+            ).stream().filter(uw -> uw.getNickname() != null)
+                .collect(Collectors.toMap(UserWechat::getUserId, UserWechat::getNickname, (a, b) -> a));
+            voPage.getRecords().forEach(vo -> {
+                vo.setDefaultAddress(addrMap.get(vo.getId()));
+                vo.setWxNickname(wxMap.get(vo.getId()));
+            });
         }
 
         return voPage;

@@ -98,6 +98,7 @@ CREATE TABLE IF NOT EXISTS `user_wechat` (
     `openid`      VARCHAR(100) NOT NULL DEFAULT ''     COMMENT '微信openid',
     `unionid`     VARCHAR(100) DEFAULT ''              COMMENT '微信unionid',
     `app_type`    VARCHAR(20)  DEFAULT ''              COMMENT '应用类型',
+    `nickname`    VARCHAR(100) DEFAULT ''              COMMENT '微信昵称',
     `create_time` DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '绑定时间',
     `update_time` DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),

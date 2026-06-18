@@ -180,6 +180,7 @@ const columns = [
   { colKey: 'avatar', title: '头像', width: 70 },
   { colKey: 'id', title: 'ID', width: 80 },
   { colKey: 'nickname', title: '昵称', ellipsis: true },
+  { colKey: 'wxNickname', title: '绑定微信', width: 130 },
   { colKey: 'phone', title: '手机号', width: 130 },
   { colKey: 'sex', title: '性别', width: 80 },
   { colKey: 'inviteCode', title: '邀请码', width: 110, ellipsis: true },

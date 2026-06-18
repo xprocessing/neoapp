@@ -46,6 +46,6 @@ public class AdminUser implements Serializable {
     @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
-    @TableLogic
+    @TableLogic(value = "0", delval = "1")
     private Integer isDeleted;
 }
