@@ -26,4 +26,7 @@ public class WechatPayProperties {
 
     /** 支付回调通知地址 */
     private String notifyUrl;
+
+    /** 子商户号（服务商模式） */
+    private String subMchId;
 }

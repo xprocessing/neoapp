@@ -73,20 +73,35 @@ public class WechatPayService {
         if (!isConfigured()) throw new IllegalStateException("微信支付未配置");
 
         var body = new java.util.LinkedHashMap<String, Object>();
-        body.put("appid", props.getAppId());
-        body.put("mchid", props.getMchId());
-        body.put("description", description);
-        body.put("out_trade_no", outTradeNo);
-        body.put("notify_url", props.getNotifyUrl() != null ? props.getNotifyUrl() : "");
-        var amt = new java.util.LinkedHashMap<String, Object>(); amt.put("total", amount); amt.put("currency", "CNY");
-        body.put("amount", amt);
-        var payer = new java.util.LinkedHashMap<String, Object>(); payer.put("openid", openid != null ? openid : "");
-        body.put("payer", payer);
-        var scene = new java.util.LinkedHashMap<String, Object>(); scene.put("payer_client_ip", clientIp);
-        body.put("scene_info", scene);
+        String url;
+        boolean isPartner = props.getSubMchId() != null && !props.getSubMchId().isBlank();
+
+        if (isPartner) {
+            body.put("sp_appid", props.getAppId());
+            body.put("sp_mchid", props.getMchId());
+            body.put("sub_mchid", props.getSubMchId());
+            body.put("description", description);
+            body.put("out_trade_no", outTradeNo);
+            body.put("notify_url", props.getNotifyUrl() != null ? props.getNotifyUrl() : "");
+            var amt = new java.util.LinkedHashMap<String, Object>(); amt.put("total", amount); amt.put("currency", "CNY");
+            body.put("amount", amt);
+            var scene = new java.util.LinkedHashMap<String, Object>(); scene.put("payer_client_ip", clientIp);
+            body.put("scene_info", scene);
+            url = "https://api.mch.weixin.qq.com/v3/pay/partner/transactions/h5";
+        } else {
+            body.put("appid", props.getAppId());
+            body.put("mchid", props.getMchId());
+            body.put("description", description);
+            body.put("out_trade_no", outTradeNo);
+            body.put("notify_url", props.getNotifyUrl() != null ? props.getNotifyUrl() : "");
+            var amt = new java.util.LinkedHashMap<String, Object>(); amt.put("total", amount); amt.put("currency", "CNY");
+            body.put("amount", amt);
+            var scene = new java.util.LinkedHashMap<String, Object>(); scene.put("payer_client_ip", clientIp);
+            body.put("scene_info", scene);
+            url = "https://api.mch.weixin.qq.com/v3/pay/transactions/h5";
+        }
 
         String json = mapper.writeValueAsString(body);
-        String url = "https://api.mch.weixin.qq.com/v3/pay/transactions/h5";
         HttpRequest request = HttpRequest.newBuilder()
             .uri(URI.create(url)).header("Content-Type", "application/json").header("Accept", "application/json")
             .header("Authorization", buildAuthHeader("POST", url, json))
@@ -112,21 +127,21 @@ public class WechatPayService {
 
         String outBillNo = "TR" + Instant.now().toEpochMilli() + UUID.randomUUID().toString().substring(0, 6);
 
-        // 转账场景报备信息（微信要求必填，场景1000现金营销需2项）
+        // 转账场景报备信息（场景1005佣金报酬）
         var reportInfo1 = new java.util.LinkedHashMap<String, Object>();
-        reportInfo1.put("info_type", "活动名称");
-        reportInfo1.put("info_content", remark != null ? remark : "夏季用户消费回馈活动");
+        reportInfo1.put("info_type", "劳务关系");
+        reportInfo1.put("info_content", "平台任务推广劳务合作");
         var reportInfo2 = new java.util.LinkedHashMap<String, Object>();
-        reportInfo2.put("info_type", "奖励说明");
-        reportInfo2.put("info_content", "用户完成消费任务发放活动履约补贴");
+        reportInfo2.put("info_type", "报酬说明");
+        reportInfo2.put("info_content", "完成平台推广任务获得佣金报酬");
 
         var body = new java.util.LinkedHashMap<String, Object>();
         body.put("appid", props.getAppId());
         body.put("out_bill_no", outBillNo);
-        body.put("transfer_scene_id", "1000");
+        body.put("transfer_scene_id", "1005");
         body.put("openid", openid);
         body.put("transfer_amount", amount);
-        body.put("transfer_remark", remark != null ? remark : "活动奖励");
+        body.put("transfer_remark", remark != null ? remark : "消费履约补贴");
         body.put("notify_url", props.getNotifyUrl() != null ? props.getNotifyUrl() : "");
         body.put("transfer_scene_report_infos", java.util.List.of(reportInfo1, reportInfo2));
 

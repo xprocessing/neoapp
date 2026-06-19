@@ -132,33 +132,31 @@ public class MemberController {
         if (pkg == null || pkg.getStatus() != 1) return Result.badRequest("套餐不可用");
 
         if (wechatPayService.isConfigured()) {
+            String tradeNo = "M" + System.currentTimeMillis() + UUID.randomUUID().toString().substring(0, 6);
+            int amount = pkg.getPrice().multiply(new java.math.BigDecimal(100)).intValue();
+            String ip = request.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isBlank()) ip = request.getRemoteAddr();
+
+            // 获取用户 openid
+            String openid = "";
+            UserWechat uw = userWechatService.getOne(new LambdaQueryWrapper<UserWechat>().eq(UserWechat::getUserId, userId));
+            if (uw != null) openid = uw.getOpenid();
+
             try {
-                String tradeNo = "M" + System.currentTimeMillis() + UUID.randomUUID().toString().substring(0, 6);
-                int amount = pkg.getPrice().multiply(new java.math.BigDecimal(100)).intValue();
-                String ip = request.getHeader("X-Forwarded-For");
-                if (ip == null || ip.isBlank()) ip = request.getRemoteAddr();
-
-                // 获取用户 openid
-                String openid = "";
-                UserWechat uw = userWechatService.getOne(new LambdaQueryWrapper<UserWechat>().eq(UserWechat::getUserId, userId));
-                if (uw != null) openid = uw.getOpenid();
-
                 JsonNode payResult = wechatPayService.createPayOrder(tradeNo, pkg.getPackageName(), amount, openid, ip);
                 Map<String, Object> result = new LinkedHashMap<>();
                 result.put("h5_url", payResult.get("h5_url").asText());
                 result.put("tradeNo", tradeNo);
                 result.put("amount", pkg.getPrice());
-                // 保存待支付状态
                 result.put("packageId", pkg.getId());
                 result.put("dayNum", pkg.getDayNum());
                 result.put("givePoint", pkg.getGivePoint());
                 return Result.success("请完成支付", result);
             } catch (Exception e) {
-                // 支付接口失败，降级为直接开通
-                return directBuy(userId, pkg);
+                return Result.badRequest("支付下单失败: " + e.getMessage());
             }
         }
-        return directBuy(userId, pkg);
+        return Result.badRequest("微信支付未配置");
     }
 
     /** 直接开通（无微信支付时） */

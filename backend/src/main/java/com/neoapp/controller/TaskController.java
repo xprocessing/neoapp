@@ -134,7 +134,7 @@ public class TaskController {
             JsonNode result = wechatPayService.transferToWallet(
                 openid,
                 log.getPayAmount().multiply(new java.math.BigDecimal(100)).intValue(),
-                null, "活动奖励"
+                null, null  // 使用默认 remark
             );
             wechatPayService.updatePayLog(log, result);
             if (log.getPayStatus() == 2) {
@@ -280,7 +280,7 @@ public class TaskController {
                     openid,
                     order.getRewardAmount().multiply(new java.math.BigDecimal(100)).intValue(), // 分
                     null,
-                    "消费体验补贴"
+                    null  // 使用默认 remark
                 );
                 wechatPayService.updatePayLog(log, result);
                 if (log.getPayStatus() == 2) {
