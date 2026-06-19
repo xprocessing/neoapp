@@ -174,17 +174,16 @@ public class WechatAuthController {
                               @RequestParam String state,
                               jakarta.servlet.http.HttpServletResponse response) throws Exception {
         try {
-            WechatOAuthService.WechatUserInfo wx = oauthService.exchangeCode(code);
-
-            // QR码扫码流程（state是UUID格式）→ 存入状态供PC端轮询
+            // QR码扫码流程（state是UUID格式）→ 后端换code存入供PC端轮询
             if (state.matches("[a-f0-9]{32}")) {
+                WechatOAuthService.WechatUserInfo wx = oauthService.exchangeCode(code);
                 qrCodeService.onCallback(state, code, wx.openid, wx.unionid, wx.nickname, wx.avatar);
                 response.setContentType("text/html;charset=utf-8");
                 response.getWriter().write("<!DOCTYPE html><html><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'></head><body style='text-align:center;padding-top:60px;font-family:sans-serif'><h2 style='color:#07c160'>✓ 扫码成功</h2><p style='color:#666'>请返回电脑继续操作</p></body></html>");
                 return;
             }
 
-            // 移动端流程 → 重定向到前端页面
+            // 移动端流程 → 直接把code给前端，由前端调用 /api/auth/wechat/login 换token
             String target = "login".equals(state) ? "/login" : "/profile";
             response.sendRedirect("https://niurouzhou.com" + target
                 + "?code=" + code + "&state=" + state);
