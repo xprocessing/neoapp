@@ -130,10 +130,10 @@ public class WechatPayService {
         // 转账场景报备信息（场景1005佣金报酬）
         var reportInfo1 = new java.util.LinkedHashMap<String, Object>();
         reportInfo1.put("info_type", "劳务关系");
-        reportInfo1.put("info_content", "平台任务推广劳务合作");
+        reportInfo1.put("info_content", "平台推广劳务合作");
         var reportInfo2 = new java.util.LinkedHashMap<String, Object>();
         reportInfo2.put("info_type", "报酬说明");
-        reportInfo2.put("info_content", "完成平台推广任务获得佣金报酬");
+        reportInfo2.put("info_content", "完成平台推广获得佣金报酬");
 
         var body = new java.util.LinkedHashMap<String, Object>();
         body.put("appid", props.getAppId());
