@@ -15,14 +15,14 @@
         </div>
 
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--color-text-primary)] leading-tight mb-6">
-          让业务管理<br class="sm:hidden" />
+          让APP开发推广<br class="sm:hidden" />
           <span class="bg-gradient-to-r from-[#0052D9] to-[#618DFF] bg-clip-text text-transparent">
             更简单高效
           </span>
         </h1>
 
         <p class="text-base sm:text-lg text-[var(--color-text-tertiary)] max-w-2xl mx-auto mb-10 leading-relaxed">
-          NeoApp 是一站式业务管理平台，集用户管理、数据分析、团队协作于一体，<br class="hidden sm:block" />
+          NeoApp 是一站式网站/APP开发，推广管理平台<br class="hidden sm:block" />
           助力企业数字化转型，提升运营效率。
         </p>
 

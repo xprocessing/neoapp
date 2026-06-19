@@ -129,11 +129,11 @@ public class WechatPayService {
 
         // 转账场景报备信息（场景1005佣金报酬）
         var reportInfo1 = new java.util.LinkedHashMap<String, Object>();
-        reportInfo1.put("info_type", "劳务关系");
-        reportInfo1.put("info_content", "平台推广劳务合作");
+        reportInfo1.put("info_type", "岗位类型");
+        reportInfo1.put("info_content", "推广分销用户");
         var reportInfo2 = new java.util.LinkedHashMap<String, Object>();
         reportInfo2.put("info_type", "报酬说明");
-        reportInfo2.put("info_content", "完成平台推广获得佣金报酬");
+        reportInfo2.put("info_content", "用户推广商品分销佣金");
 
         var body = new java.util.LinkedHashMap<String, Object>();
         body.put("appid", props.getAppId());
@@ -141,7 +141,7 @@ public class WechatPayService {
         body.put("transfer_scene_id", "1005");
         body.put("openid", openid);
         body.put("transfer_amount", amount);
-        body.put("transfer_remark", remark != null ? remark : "消费履约补贴");
+        body.put("transfer_remark", remark != null ? remark : "佣金报酬");
         body.put("notify_url", props.getNotifyUrl() != null ? props.getNotifyUrl() : "");
         body.put("transfer_scene_report_infos", java.util.List.of(reportInfo1, reportInfo2));
 
