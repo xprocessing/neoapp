@@ -28,7 +28,7 @@
 
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
           <a
-            href="/admin"
+            href="/admin/"
             class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[#0052D9] to-[#366EF4] text-white font-medium rounded-[var(--radius-btn)] hover:shadow-lg hover:-translate-y-0.5 transition-all text-base"
           >
             立即开始
@@ -122,7 +122,7 @@
           立即体验 NeoApp，提升团队工作效率
         </p>
         <a
-          href="/admin"
+          href="/admin/"
           class="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-[var(--color-primary)] font-medium rounded-[var(--radius-btn)] hover:shadow-xl hover:-translate-y-0.5 transition-all text-base"
         >
           免费试用

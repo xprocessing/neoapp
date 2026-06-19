@@ -159,14 +159,43 @@ public class TaskController {
 
     // ==================== Web (C端) ====================
 
-    /** 上架任务列表（web端） */
+    /** 上架任务列表（web端）—— 仅展示当前时段有余量的任务 */
     @GetMapping("/api/user/tasks")
     public Result<Page<TaskInfo>> webList(
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size) {
-        LambdaQueryWrapper<TaskInfo> w = new LambdaQueryWrapper<>();
-        w.eq(TaskInfo::getStatus, 1).orderByDesc(TaskInfo::getSort);
-        return Result.success(taskInfoService.page(new Page<>(page, size), w));
+        int currentHour = LocalDateTime.now().getHour();
+
+        // 查所有上架任务
+        List<TaskInfo> allTasks = taskInfoService.list(
+            new LambdaQueryWrapper<TaskInfo>().eq(TaskInfo::getStatus, 1).orderByDesc(TaskInfo::getSort));
+
+        // 过滤：当前时段有余量
+        List<TaskInfo> available = new ArrayList<>();
+        for (TaskInfo task : allTasks) {
+            int limit = getHourLimit(task.getHourLimits(), currentHour);
+            if (limit <= 0) continue;
+            // 统计本小时已领取数
+            long claimed = orderService.count(new LambdaQueryWrapper<TaskUserOrder>()
+                .eq(TaskUserOrder::getTaskId, task.getId())
+                .ge(TaskUserOrder::getCreateTime, LocalDateTime.now().withMinute(0).withSecond(0).withNano(0)));
+            if (claimed < limit) available.add(task);
+        }
+
+        // 手动分页
+        int start = (page - 1) * size;
+        int end = Math.min(start + size, available.size());
+        Page<TaskInfo> result = new Page<>(page, size, available.size());
+        result.setRecords(start < available.size() ? available.subList(start, end) : List.of());
+        return Result.success(result);
+    }
+
+    /** 解析 hourLimits 获取当前时段配额 */
+    private int getHourLimit(String hourLimits, int hour) {
+        if (hourLimits == null || hourLimits.isBlank()) return 0;
+        String[] parts = hourLimits.split(",");
+        if (hour >= parts.length) return 0;
+        try { return Integer.parseInt(parts[hour].trim()); } catch (NumberFormatException e) { return 0; }
     }
 
     /** 任务详情 */
