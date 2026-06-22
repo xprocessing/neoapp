@@ -1,4 +1,9 @@
 node_modules/
+# Java编译产物
+target/
 *.jar
 *.class
-backend/src/main/resources/application-dev.yml
+# 云密钥配置（环境变量替代明文）
+application-dev.yml
+application-prod.yml
+.codebuddy
