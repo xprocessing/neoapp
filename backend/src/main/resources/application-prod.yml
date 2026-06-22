@@ -22,8 +22,8 @@ jwt:
 
 # Tencent Cloud COS
 cos:
-  secret-id: AKID04ye5HExSjma9Tu63lERPAh5QjqkcHhe
-  secret-key: oNhmkfPwERPCk371Yt30lJfokV1Up9PV
+  secret-id: AKID04
+  secret-key: oNhmkfPwER
   region: ap-shanghai
   bucket: neoimage-1251198067
 
